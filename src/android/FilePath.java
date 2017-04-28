@@ -19,6 +19,11 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONException;
 
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Arrays;
 import java.util.List;
 import java.io.File;
 
@@ -154,18 +159,41 @@ public class FilePath extends CordovaPlugin {
         };
 
         try {
-            cursor = context.getContentResolver().query(uri, projection, selection, selectionArgs,
-                    null);
+            cursor = context.getContentResolver().query(uri, null, null, null, null);
+            String[] columns = cursor.getColumnNames();
+            Log.d(TAG, Arrays.toString(columns));
+            InputStream attachment = context.getContentResolver().openInputStream(uri);
             if (cursor != null && cursor.moveToFirst()) {
-                final int column_index = cursor.getColumnIndexOrThrow(column);
-                return cursor.getString(column_index);
+                if(Arrays.asList(columns).contains("_data")){
+                    final int column_index = cursor.getColumnIndexOrThrow(column);
+                    return cursor.getString(column_index);
+                } else {
+                    String filename = cursor.getString(cursor.getColumnIndexOrThrow("_display_name"));
+                    File cacheDir = context.getCacheDir();
+                    File resultFile = new File(cacheDir, filename);
+                    FileOutputStream fos = new FileOutputStream(resultFile);
+                    int read = 0;
+                    byte[] bytes = new byte[1024];
+
+                    assert attachment != null;
+                    while ((read = attachment.read(bytes)) != -1) {
+                        fos.write(bytes, 0, read);
+                    }
+
+                    fos.close();
+                    attachment.close();
+                    return resultFile.getAbsolutePath();
+
+                }
             }
-        } finally {
-            if (cursor != null)
-                cursor.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
         return null;
     }
+
 
     /**
      * Get content:// from segment list
