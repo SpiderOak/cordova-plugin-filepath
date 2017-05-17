@@ -238,7 +238,7 @@ public class FilePath extends CordovaPlugin {
      *
      * @param pathData The storage type and the relative path
      */
-    private static String getPathFromExtSD(String[] pathData) {
+    public static String getPathFromExtSD(String[] pathData) {
         final String type = pathData[0];
         final String relativePath = "/" + pathData[1];
         String fullPath = "";
@@ -284,7 +284,7 @@ public class FilePath extends CordovaPlugin {
      * @param context The context.
      * @param uri The Uri to query.
      */
-    private static String getPath(final Context context, final Uri uri) {
+    public static String getPath(final Context context, final Uri uri) {
 
         Log.d(TAG, "File - " +
                 "Authority: " + uri.getAuthority() +

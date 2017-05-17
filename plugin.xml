@@ -33,7 +33,7 @@ xmlns:android="http://schemas.android.com/apk/res/android"
 
     <!-- android -->
     <platform name="android">
-		<hook type="after_build" src="scripts/alterXwalkFileChooser.js" />
+		<hook type="before_build" src="scripts/alterXwalkFileChooser.js" />
         <js-module src="www/FilePath.js" name="FilePath">
             <clobbers target="window.FilePath" />
         </js-module>
