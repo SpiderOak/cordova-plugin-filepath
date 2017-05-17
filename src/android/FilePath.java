@@ -159,12 +159,19 @@ public class FilePath extends CordovaPlugin {
         };
 
         try {
-            cursor = context.getContentResolver().query(uri, null, null, null, null);
+            cursor = context.getContentResolver().query(uri, null, selection, selectionArgs, null);
             String[] columns = cursor.getColumnNames();
             Log.d(TAG, Arrays.toString(columns));
-            InputStream attachment = context.getContentResolver().openInputStream(uri);
+            InputStream attachment = null;
+            if (!Arrays.asList(columns).contains("_data")) {
+                try {
+                    attachment = context.getContentResolver().openInputStream(uri);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
             if (cursor != null && cursor.moveToFirst()) {
-                if(Arrays.asList(columns).contains("_data")){
+                if(Arrays.asList(columns).contains("_data") && attachment == null){
                     final int column_index = cursor.getColumnIndexOrThrow(column);
                     return cursor.getString(column_index);
                 } else {
