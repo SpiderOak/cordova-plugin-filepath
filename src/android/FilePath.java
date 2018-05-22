@@ -318,6 +318,10 @@ public class FilePath extends CordovaPlugin {
             else if (isDownloadsDocument(uri)) {
 
                 final String id = DocumentsContract.getDocumentId(uri);
+                // Android 8 fix
+                if(id.contains("raw:")){
+                    return id.substring(4);
+                }
                 final Uri contentUri = ContentUris.withAppendedId(
                         Uri.parse("content://downloads/public_downloads"), Long.valueOf(id));
 
