@@ -30,7 +30,7 @@ module.exports = function (context) {
                         if (err) return console.log(err);
                     });
                 });
-            }
+            });
         }
     });
     return deferred.promise;
